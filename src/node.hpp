@@ -130,9 +130,79 @@ public:
         return child;
     }
     bool add_customer(id token_id, double g0, vector<double> &d_m, vector<double> &theta_m, bool update_beta_count=true) {
+        init_hyperparameters_at_depth_if_needed(_depth, d_m, theta_m);
+        double d_u = d_m[_depth];
+        double theta_u = theta_m[_depth];
+        double parent_Pw = g0;
+        if (_parent) {
+            parent_Pw = _parent->compute_Pw(token_id, g0, d_m, theta_m);
+        }
+        auto itr = _arrangement.find(token_id);
+        if (itr == _arrangement.end()) {
+            add_customer_to_new_table(token_id, g0, d_m, theta_m);
+            if (update_beta_count) {
+                increment_stop_count();
+            }
+            return true;
+        }
+        vector<int> &num_customers_at_table = itr->second;
+        double sum = 0;
+        for (int k=0; k<num_customers_at_table.size(); ++k) {
+            sum += std::max(0.0, num_customers_at_table[k - d_u]);
+        }
+        double t_u = _num_tables;
+        sum += (theta_u + d_u * t_u) * parent_Pw;
 
+        double normalizer = 1.0 / sum;
+        double bernoulli = sampler::uniform(0, 1);
+        double stack = 0;
+        for (int k=0; k<num_customers_at_table.size(); ++k) {
+            stack += std::max(0.0, num_customers_at_table[k] - d_u) * normalizer;
+            if (bernoulli <= stack) {
+                add_customer_to_table(token_id, k, g0, d_m, theta_m);
+                if (update_beta_count) {
+                    increment_stop_count();
+                }
+                return true;
+            }
+        }
+        add_customer_to_new_table(token_id, g0, d_m, theta_m);
+        if (update_beta_count) {
+            increment_stop_count();
+        }
+        return true;
     }
     bool remove_customer(id token_id, bool update_beta_count=true) {
-
+        auto itr = _arrangement.find(token_id);
+        vector<int> &num_customers_at_table = itr->second;
+        double sum = std::accumulate(num_customers_at_table.begin(), num_customers_at_table.end(), 0);
+        double normalizer = 1.0 / sum;
+        double bernoulli = sampler::uniform(0, 1);
+        double stack = 0;
+        for (int k=0; k<=num_customers_at_table.size(); ++k) {
+            stack += num_customers_at_table[k] * normalizer;
+            if (bernoulli <= stack) {
+                remove_customer_from_table(token_id, k);
+                if (update_beta_count) {
+                    decrement_stop_count();
+                }
+                return true;
+            }
+        }
+        remove_customer_from_table(token_id, num_customers_at_table.size()-1);
+        if (update_beta_count) {
+            decrement_stop_count();
+        }
+        return true;
+    }
+    void init_hyperparameters_at_depth_if_needed(int depth, vector<double> &d_m, vector<double> &theta_m) {
+        if (depth >= d_m.size()) {
+            while (d_m.size() <= depth) {
+                d_m.push_back(HPYLM_INITIAL_D);
+            }
+            while (theta_m.size() <= depth) {
+                theta_m.push_back(HPYLM_INITIAL_THETA);
+            }
+        }
     }
 };
