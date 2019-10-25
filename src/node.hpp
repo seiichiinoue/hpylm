@@ -148,7 +148,7 @@ public:
         vector<int> &num_customers_at_table = itr->second;
         double sum = 0;
         for (int k=0; k<num_customers_at_table.size(); ++k) {
-            sum += std::max(0.0, num_customers_at_table[k - d_u]);
+            sum += std::max(0.0, num_customers_at_table[k] - d_u);
         }
         double t_u = _num_tables;
         sum += (theta_u + d_u * t_u) * parent_Pw;
@@ -194,6 +194,123 @@ public:
             decrement_stop_count();
         }
         return true;
+    }
+    double compute_Pw(id token_id, double g0, vector<double> &d_m, vector<double> &theta_m) {
+        init_hyperparameters_at_depth_if_needed(_depth, d_m, theta_m);
+        double d_u = d_m[_depth];
+        double theta_u = theta_m[_depth];
+        double t_u = _num_tables;
+        double c_u = _num_customers;
+        auto itr = _arrangement.find(token_id);
+        if (itr == _arrangement.end()) {
+            double coeff = (theta_u + d_u * t_u) / (theta_u + c_u);
+            if (_parent != NULL) {
+                return _parent->compute_Pw(token_id, g0, d_m, theta_m) * coeff;
+            }
+            return g0 * coeff;
+        }
+        double parent_Pw = g0;
+        if (_parent != NULL) {
+            parent_Pw = _parent->compute_Pw(token_id, g0, d_m, theta_m);
+        }
+        vector<int> &num_customers_at_table = itr->second;
+        double c_uw = std::accumulate(num_customers_at_table.begin(), num_customers_at_table.end(), 0);
+        double t_uw = num_customers_at_table.size();
+        double first_term = std::max(0.0, c_uw - d_u * t_uw) / (theta_u + c_u);
+        double second_coeff = (theta_u + d_u * t_u) / (theta_u + c_u);
+        return first_term + second_coeff * parent_Pw;
+    }
+    double stop_probability(double beta_stop, double beta_pass) {
+        double p = (_stop_count + beta_stop) / (_stop_count + _pass_count + beta_stop + beta_pass);
+        if (_parent != NULL) {
+            p *= _parent->pass_probability(beta_stop, beta_pass);
+        }
+        return p;
+    }
+    double pass_probability(double beta_stop, double beta_pass) {
+        double p = (_pass_count + beta_pass) / (_stop_count + _pass_count + beta_stop + beta_pass);
+        if (_parent != NULL) {
+            p *= _parent->pass_probability(beta_stop, beta_pass);
+        }
+        return p;
+    }
+    void increment_stop_count() {
+        _stop_count++;
+        if (_parent != NULL) {
+            _parent->increment_pass_count();
+        }
+    }
+    void decrement_stop_count() {
+        _stop_count--;
+        if (_parent != NULL) {
+            _parent->decrement_pass_count();
+        }
+    }
+    void increment_pass_count() {
+        _pass_count++;
+        if (_parent != NULL) {
+            _parent->increment_pass_count();
+        }
+    }
+    void decrement_pass_count() {
+        _pass_count--;
+        if (_parent != NULL) {
+            _parent->decrement_pass_count();
+        }
+    }
+    bool remove_from_parent() {
+        if (_parent == NULL) {
+            return false;
+        }
+        _parent->delete_child_node(_token_id);
+        return true;
+    }
+    void delete_child_node(id token_id) {
+        Node *child = find_child_node(token_id);
+        if (child) {
+            _children.erase(token_id);
+            delete child;
+        }
+        if (_children.size() == 0 && _arrangement.size() == 0) {
+            remove_from_parent();
+        }
+    }
+    int get_max_depth(int base) {
+        int max_depth = base;
+        for (auto &elem : _children) {
+            int depth = elem.second->get_max_depth(base + 1);
+            if (depth > max_depth) {
+                max_depth = depth;
+            }
+        }
+        return max_depth;
+    }
+    int get_num_nodes() {
+        int num = _children.size();
+        for (auto &elem : _children) {
+            num += elem.second->get_num_nodes();
+        }
+        return num;
+    }
+    int get_num_tables() {
+        int num = 0;
+        for (auto &elem : _arrangement) {
+            num += elem.second.size();
+        }
+        for (auto &elem : _children) {
+            num += elem.second->get_num_tables();
+        }
+        return num;
+    }
+    int get_num_customers() {
+        int num = 0;
+        for (auto &elem : _arrangement) {
+            num += std::accumulate(elem.second.begin(), elem.second.end(), 0);
+        }
+        for (auto &elem : _children) {
+            num += elem.second->get_num_customers();
+        }
+        return num;
     }
     void init_hyperparameters_at_depth_if_needed(int depth, vector<double> &d_m, vector<double> &theta_m) {
         if (depth >= d_m.size()) {
