@@ -312,6 +312,83 @@ public:
         }
         return num;
     }
+    int sum_pass_counts() {
+        int sum = _pass_count;
+        for(auto &elem : _children) {
+            sum += elem.second->sum_pass_counts();
+        }
+        return sum;
+    }
+    int sum_stop_counts() {
+        int sum = _stop_count;
+        for(auto &elem : _children) {
+            sum += elem.second->sum_stop_counts();
+        }
+        return sum;
+    }
+    void count_tokens_of_each_depth(unordered_map<int, int> &counts) {
+        for(auto &elem : _arrangement) {
+            counts[_depth] += 1;
+        }
+        for(auto &elem : _children) {
+            elem.second->count_tokens_of_each_depth(counts);
+        }
+    }
+    void enumerate_nodes_at_depth(int depth, vector<Node*> &nodes) {
+        if(_depth == depth) {
+            nodes.push_back(this);
+        }
+        for(auto &elem : _children) {
+            elem.second->enumerate_nodes_at_depth(depth, nodes);
+        }
+    }
+    double auxiliary_log_x_u(double theta_u) {
+        if(_num_customers>=2) {
+            double x_u = sampler::beta(theta_u + 1, _num_customers - 1);
+            return log(x_u + 1e-8);
+        }
+        return 0;
+    }
+    double auxiliary_y_ui(double d_u, double theta_u) {
+        if(_num_tables>=2) {
+            double sum_y_ui = 0;
+            for(int i=1; i<=_num_tables-1; ++i) {
+                double denominator = theta_u + d_u * i;
+                assert(denominator > 0);
+                sum_y_ui += sampler::bernoulli(theta_u / denominator);
+            }
+            return sum_y_ui;
+        }
+        return 0;
+    }
+    double auxiliary_1_y_ui(double d_u, double theta_u) {
+        if(_num_tables>=2) {
+            double sum_1_y_ui = 0;
+            for(int i=1; i<=_num_tables-1; ++i) {
+                double denominator = theta_u + d_u * i;
+                assert(denominator > 0);
+                sum_1_y_ui += 1.0 - sampler::bernoulli(theta_u / denominator);
+            }
+            return sum_1_y_ui;
+        }
+        return 0;
+    }
+    double auxiliary_1_z_uwkj(double d_u) {
+        double sum_z_uwkj = 0;
+        for(auto elem : _arrangement) {
+            vector<int> &num_customers_at_table = elem.second;
+            for(int k=0; k<num_customers_at_table.size(); ++k) {
+                int c_uwk = num_customers_at_table[k];
+                if(c_uwk>=2) {
+                    for(int j=1; j<=c_uwk-1; ++j) {
+                        assert(j - d_u > 0);
+                        sum_z_uwkj += 1 - sampler::bernoulli((j - 1) / (j - d_u));
+                    }
+                }
+            }
+        }
+        return sum_z_uwkj;
+    }
     void init_hyperparameters_at_depth_if_needed(int depth, vector<double> &d_m, vector<double> &theta_m) {
         if (depth >= d_m.size()) {
             while (d_m.size() <= depth) {
