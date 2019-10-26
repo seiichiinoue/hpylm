@@ -399,4 +399,18 @@ public:
             }
         }
     }
+    template <class Archive>
+    void serialize(Archive &archive, unsigned int version) {
+        archive & _children;
+        archive & _arrangement;
+        archive & _num_tables;
+        archive & _num_customers;
+        archive & _parent;
+        archive & _stop_count;
+        archive & _pass_count;
+        archive & _token_id;
+        archive & _depth;
+        archive & _identifier;
+        archive & _auto_increment;
+    }
 };
