@@ -61,7 +61,6 @@ private:
         return true;
     }
 public:
-    static id _auto_increment;
     hashmap<id, Node*> _children;
     hashmap<id, vector<int>> _arrangement;
     Node *_parent;
@@ -71,15 +70,12 @@ public:
     int _pass_count;
     int _depth;
     id _token_id;
-    id _identifier;
     
     Node(id token_id=0) {
         _num_tables = 0;
         _num_customers = 0;
         _stop_count = 0;
         _pass_count = 0;
-        _identifier = _auto_increment;
-        _auto_increment++;
         _token_id = token_id;
         _parent = NULL;
     }
@@ -410,7 +406,5 @@ public:
         archive & _pass_count;
         archive & _token_id;
         archive & _depth;
-        archive & _identifier;
-        archive & _auto_increment;
     }
 };
