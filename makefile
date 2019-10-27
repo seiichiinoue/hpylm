@@ -10,10 +10,10 @@ hpylm:
 	$(CC) -O3 -o cstm src/model.cpp $(BOOST) $(GFLAGS)
 
 install:
-	$(CC) -O3 -DPIC -shared -fPIC -o pycstm.so pycstm.cpp $(INCLUDE) $(LDFLAGS) $(PYTHON) $(BOOST) $(GFLAGS)
+	$(CC) -O3 -DPIC -shared -fPIC -o pyhpylm.so pyhpylm.cpp $(INCLUDE) $(LDFLAGS) $(PYTHON) $(BOOST) $(GFLAGS)
 
 test:
-	$(CC) -O3 -Wall -o cstm src/model.cpp $(LLDB) $(BOOST) $(GFLAGS)
+	$(CC) -O3 -Wall -o hpylm src/model.cpp $(LLDB) $(BOOST) $(GFLAGS)
 
 clean:
 	rm -f cstm
