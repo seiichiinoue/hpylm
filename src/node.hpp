@@ -22,8 +22,8 @@ private:
         if (itr == _arrangement.end()) {
             return add_customer_to_new_table(token_id, g0, d_m, theta_m);
         }
-        vector<int> &_num_customers_at_table = itr->second;
-        _num_customers_at_table[table_k]++;
+        vector<int> &num_customers_at_table = itr->second;
+        num_customers_at_table[table_k]++;
         _num_customers++;
         return true;
     }
@@ -33,8 +33,8 @@ private:
             vector<int> tables = {1};
             _arrangement[token_id] = tables;
         } else {
-            vector<int> &_num_customers_at_table = itr->second;
-            _num_customers_at_table.push_back(1);
+            vector<int> &num_customers_at_table = itr->second;
+            num_customers_at_table.push_back(1);
         }
         _num_tables++;
         _num_customers++;
@@ -89,7 +89,7 @@ public:
         if (_parent == NULL) {
             return false;
         }
-        if (_children.size() == 0 && _arrangement.size() == 0) {
+        if (_children.size() == 0 and _arrangement.size() == 0) {
             return true;
         }
         return false;
@@ -175,7 +175,7 @@ public:
         double normalizer = 1.0 / sum;
         double bernoulli = sampler::uniform(0, 1);
         double stack = 0;
-        for (int k=0; k<=num_customers_at_table.size(); ++k) {
+        for (int k=0; k<num_customers_at_table.size(); ++k) {
             stack += num_customers_at_table[k] * normalizer;
             if (bernoulli <= stack) {
                 remove_customer_from_table(token_id, k);
