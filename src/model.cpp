@@ -38,6 +38,7 @@ python::list list_from_vector(vector<T> &vec){
 }
 
 class PyHPYLM {
+public:
     HPYLM *_hpylm;
     Vocab *_vocab;
     vector<vector<id>> _dataset_train;
@@ -192,7 +193,7 @@ class PyHPYLM {
     id get_eos_id(){
         return ID_EOS;
     }
-    python::list count_tokens_of_epoch_depth() {
+    python::list count_tokens_of_each_depth() {
         unordered_map<int, int> counts_by_depth;
         _hpylm->count_tokens_of_each_depth(counts_by_depth);
         // sort
@@ -239,7 +240,7 @@ class PyHPYLM {
             vector<id> &token_ids = dataset[data_index];
             log_P_dataset += _hpylm->compute_log2_Pw(token_ids) / (token_ids.size() - _hpylm->_depth);
         }
-        return pow(2.0, -log_P_dataset, (double)dataset.size());
+        return std::pow(2.0, -log_P_dataset / (double)dataset.size());
     }
 };
 
@@ -263,8 +264,8 @@ BOOST_PYTHON_MODULE(model) {
     .def("get_eos_id", &PyHPYLM::get_eos_id)
     .def("sample_hyperparameters", &PyHPYLM::sample_hyperparameters)
     .def("count_tokens_of_each_depth", &PyHPYLM::count_tokens_of_each_depth)
-    .def("compute_log_P_dataset_train", &PyHPYLM::compute_log_Pdataset_train)
-    .def("compute_log_P_dataset_test", &PyHPYLM::compute_log_Pdataset_test)
+    .def("compute_log_P_dataset_train", &PyHPYLM::compute_log_P_dataset_train)
+    .def("compute_log_P_dataset_test", &PyHPYLM::compute_log_P_dataset_test)
     .def("compute_perplexity_train", &PyHPYLM::compute_perplexity_train)
     .def("compute_perplexity_test", &PyHPYLM::compute_perplexity_test)
     .def("save", &PyHPYLM::save)
