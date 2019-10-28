@@ -62,7 +62,7 @@ public:
         oarchive << *this;
     }
     template <class Archive>
-    void serealize(Archive &archive, unsigned int version) {
+    void serialize(Archive &archive, unsigned int version) {
         static_cast<void>(version);
         archive & _string_by_token_id;
         archive & _token_ids;
