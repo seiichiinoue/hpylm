@@ -88,7 +88,7 @@ public:
         }
         int split = lines.size() * split_ratio;
         shuffle(rand_indices.begin(), rand_indices.end(), sampler::mt);
-        for (int i=0; i<_rand_indices.size(); ++i) {
+        for (int i=0; i<rand_indices.size(); ++i) {
             wstring &sentence = lines[rand_indices[i]];
             if (i < split) {
                 add_train_data(sentence);
