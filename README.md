@@ -15,6 +15,26 @@ ABSTRACT:
 - gflag 2.2.2
 - boost-python3
 
+## Usage
+
+- prepare dataset
+
+```zsh
+% python3 utils/process.py -t data/raw/ -s data/processed
+```
+
+- build library
+
+```zsh
+% make
+```
+
+- training hpylm
+
+```zsh
+% python3 train.py
+```
+
 ## Reference
 
 - [A Hierarchical Bayesian Language Model based on Pitman-Yor Processes](http://www.gatsby.ucl.ac.uk/~ywteh/research/compling/acl2006.pdf)
