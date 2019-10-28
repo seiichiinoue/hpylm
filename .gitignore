@@ -2,11 +2,12 @@
 *
 
 # allow any
-!data/*/*.txt
+!data/
 !*/
 !*.py
 !*.cpp
 !*.hpp
-!.md
+!*.md
+!*.txt
 !.gitignore
 !makefile
