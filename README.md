@@ -32,7 +32,7 @@ ABSTRACT:
 - training hpylm
 
 ```zsh
-% python3 train.py
+% python3 train.py -f data/processed/kokoro.txt -r 0.8
 ```
 
 ## Reference
