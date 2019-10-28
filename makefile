@@ -2,18 +2,14 @@ CC = clang++
 LLDB = -g
 BOOST = -lboost_serialization
 PYTHON = -lboost_python37
-GFLAGS = -lglog -lgflags
 INCLUDE = -I/usr/local/lib `python3.7-config --include`
 LDFLAGS = `python3.7-config --ldflags`
 
 hpylm:
-	$(CC) -O3 -o cstm src/model.cpp $(BOOST) $(GFLAGS)
-
-install:
-	$(CC) -O3 -DPIC -shared -fPIC -o pyhpylm.so pyhpylm.cpp $(INCLUDE) $(LDFLAGS) $(PYTHON) $(BOOST) $(GFLAGS)
+	$(CC) -O3 -DPIC -shared -fPIC -o hpylm.so src/model.cpp $(INCLUDE) $(LDFLAGS) $(PYTHON) $(BOOST)
 
 test:
-	$(CC) -O3 -Wall -o hpylm src/model.cpp $(LLDB) $(BOOST) $(GFLAGS)
+	$(CC) -O3 -Wall -o hpylm src/model.cpp $(LLDB) $(INCLUDE) $(LDFLAGS) $(PYTHON) $(BOOST)
 
 clean:
 	rm -f cstm
