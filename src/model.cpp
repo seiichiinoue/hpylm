@@ -242,3 +242,31 @@ class PyHPYLM {
         return pow(2.0, -log_P_dataset, (double)dataset.size());
     }
 };
+
+BOOST_PYTHON_MODULE(model) {
+    python::class_<PyHPYLM>("hpylm")
+    .def(python::init<>())
+    .def(python::init<int>())
+    .def("set_g0", &PyHPYLM::set_g0)
+    .def("load_textfile", &PyHPYLM::load_textfile)
+    .def("perform_gibbs_sampling", &PyHPYLM::perform_gibbs_sampling)
+    .def("get_num_nodes", &PyHPYLM::get_num_nodes)
+    .def("get_num_customers", &PyHPYLM::get_num_customers)
+    .def("get_discount_parameters", &PyHPYLM::get_discount_parameters)
+    .def("get_strength_parameters", &PyHPYLM::get_strength_parameters)
+    .def("get_num_train_data", &PyHPYLM::get_num_train_data)
+    .def("get_num_test_data", &PyHPYLM::get_num_test_data)
+    .def("get_num_types_of_words", &PyHPYLM::get_num_types_of_words)
+    .def("get_num_words", &PyHPYLM::get_num_words)
+    .def("get_hpylm_depth", &PyHPYLM::get_hpylm_depth)
+    .def("get_bos_id", &PyHPYLM::get_bos_id)
+    .def("get_eos_id", &PyHPYLM::get_eos_id)
+    .def("sample_hyperparameters", &PyHPYLM::sample_hyperparameters)
+    .def("count_tokens_of_each_depth", &PyHPYLM::count_tokens_of_each_depth)
+    .def("compute_log_P_dataset_train", &PyHPYLM::compute_log_Pdataset_train)
+    .def("compute_log_P_dataset_test", &PyHPYLM::compute_log_Pdataset_test)
+    .def("compute_perplexity_train", &PyHPYLM::compute_perplexity_train)
+    .def("compute_perplexity_test", &PyHPYLM::compute_perplexity_test)
+    .def("save", &PyHPYLM::save)
+    .def("load", &PyHPYLM::load);
+}
