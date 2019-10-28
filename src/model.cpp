@@ -242,12 +242,12 @@ public:
         }
         return std::pow(2.0, -log_P_dataset / (double)dataset.size());
     }
-    wstring generate_sentence(int length) {
+    wstring generate_sentence() {
         std::vector<id> context_token_ids;
         for (int i=0; i<_hpylm->_depth; ++i) {
             context_token_ids.push_back(ID_BOS);
         }
-        for (int n=0; n<length; ++n) {
+        for (int n=0; n<1000; ++n) {
             id next_id = _hpylm->sample_next_token(context_token_ids, _vocab->get_all_token_ids());
             if (next_id == ID_EOS) {
                 vector<id> token_ids(context_token_ids.begin() + _hpylm->_depth, context_token_ids.end());
@@ -283,6 +283,7 @@ BOOST_PYTHON_MODULE(model) {
     .def("compute_log_P_dataset_test", &PyHPYLM::compute_log_P_dataset_test)
     .def("compute_perplexity_train", &PyHPYLM::compute_perplexity_train)
     .def("compute_perplexity_test", &PyHPYLM::compute_perplexity_test)
+    .def("generate_sentence", &PyHPYLM::generate_sentence)
     .def("save", &PyHPYLM::save)
     .def("load", &PyHPYLM::load);
 }
