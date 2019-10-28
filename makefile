@@ -9,9 +9,9 @@ hpylm:
 	$(CC) -O3 -DPIC -shared -fPIC -o model.so src/model.cpp $(INCLUDE) $(LDFLAGS) $(PYTHON) $(BOOST)
 
 test:
-	$(CC) -O3 -Wall -o hpylm src/model.cpp $(LLDB) $(INCLUDE) $(LDFLAGS) $(PYTHON) $(BOOST)
+	$(CC) -O3 -DPIC -shared -fPIC -o test src/test.cpp $(LLDB) $(INCLUDE) $(LDFLAGS) $(PYTHON) $(BOOST)
 
 clean:
-	rm -f cstm
+	rm -f model.so test
 
 .PHONY: clean
