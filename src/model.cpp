@@ -221,7 +221,7 @@ class PyHPYLM {
     }
     double _compute_log_P_dataset(vector<vector<id>> &dataset) {
         double log_P_dataset = 0;
-        for (int data_index=0; data_index<dataset.size(); ++dataset_index) {
+        for (int data_index=0; data_index<dataset.size(); ++data_index) {
             vector<id> &token_ids = dataset[data_index];
             log_P_dataset += _hpylm->compute_log_Pw(token_ids);
         }
@@ -235,7 +235,7 @@ class PyHPYLM {
     }
     double _compute_perplexity(vector<vector<id>> &dataset) {
         double log_P_dataset = 0;
-        for (int data_index=0; data_index<dataset.size(); ++dataset_index) {
+        for (int data_index=0; data_index<dataset.size(); ++data_index) {
             vector<id> &token_ids = dataset[data_index];
             log_P_dataset += _hpylm->compute_log2_Pw(token_ids) / (token_ids.size() - _hpylm->_depth);
         }
