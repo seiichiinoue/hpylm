@@ -101,7 +101,7 @@ public:
         return p;
     }
     double compute_Pw_h(id token_id, vector<id> &context_token_ids) {
-        Node *node = find_node_by_tracing_back_context(context_token_ids, context_token_ids.size(), _depth, false);
+        Node *node = find_node_by_tracing_back_context(context_token_ids, context_token_ids.size(), _depth, false, true);
         return node->compute_Pw(token_id, _g0, _d_m, _theta_m);
     }
     double compute_Pw(id token_id) {
@@ -112,7 +112,7 @@ public:
         double mult_pw_h = 1;
         vector<id> context_token_ids(token_ids.begin(), token_ids.begin() + _depth);
         for (int t=_depth; t<token_ids.size(); ++t) {
-            id token_ids = token_ids[t];
+            id token_id = token_ids[t];
             mult_pw_h *= compute_Pw_h(token_id, context_token_ids);
             context_token_ids.push_back(token_id);
         }
@@ -121,7 +121,7 @@ public:
     double compute_log_Pw(vector<id> &token_ids) {
         double sum_pw_h = 0;
         vector<id> context_token_ids(token_ids.begin(), token_ids.begin() + _depth);
-        for (int t=_depth, t<token_ids.size(); ++t) {
+        for (int t=_depth; t<token_ids.size(); ++t) {
             id token_id = token_ids[t];
             double pw_h = compute_Pw_h(token_id, context_token_ids);
             sum_pw_h += log(pw_h);
@@ -166,7 +166,7 @@ public:
         double normalizer = 1.0 / sum;
         double bernoulli = sampler::uniform(0, 1);
         double stack = 0;
-        for (int i=0 i<token_ids.size(); ++i) {
+        for (int i=0; i<token_ids.size(); ++i) {
             stack += pw_h_array[i] * normalizer;
             if (stack > bernoulli) {
                 return token_ids[i];
@@ -249,13 +249,13 @@ public:
         archive & _alpha_m;
         archive & _beta_m;
     }
-    bool save(string filename = "hpylm.model") {
+    bool save(string filename) {
         std::ofstream ofs(filename);
         boost::archive::binary_oarchive oarchive(ofs);
         oarchive << *this;
         return true;
     }
-    bool load(string filename = "hpylm.model") {
+    bool load(string filename) {
         std::ifstream ifs(filename);
         if(ifs.good() == false){
             return false;
