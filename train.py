@@ -18,10 +18,11 @@ def train(args):
         hpylm.sample_hyperparameters()
         if epoch % 10 == 0:
             # validation
+            print("epoch: {}/{}".format(epoch, args.epoch))
             log_likelihood = hpylm.compute_log_P_dataset_test()
             perplexity = hpylm.compute_perplexity_test()
-            print("log likelihood: {}".format(log_likelihood))
-            print("perplexity: {}".format(perplexity))
+            print("    log likelihood: {}".format(log_likelihood))
+            print("    perplexity: {}".format(perplexity))
             hpylm.save(args.model)
 
 if __name__ == '__main__':
@@ -29,6 +30,6 @@ if __name__ == '__main__':
     parser.add_argument("-f", "--filename", default="./data/processed/kokoro.txt")
     parser.add_argument("-n", "--ngram", default=3)
     parser.add_argument("-e", "--epoch", default=10000)
-    parser.add_argument("-m", "--model", default="./model/hpylm.model")
+    parser.add_argument("-m", "--model", default="./model")
     parser.add_argument("-r", "--split_ratio", default=0.8)
     train(parser.parse_args())
