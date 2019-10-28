@@ -44,8 +44,8 @@ class Text(object):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='this script for text processing.')
-    parser.add_argument('--tar_path', default="./data/raw/", help='directory located raw file')
-    parser.add_argument('--save_path', default="./data/processed/", help='directory save processed text')
+    parser.add_argument('-t', '--tar_path', default="./data/raw/", help='directory located raw file')
+    parser.add_argument('-s', '--save_path', default="./data/processed/", help='directory save processed text')
     args = parser.parse_args()
     filelist = os.listdir(args.tar_path)
     for file in filelist:
