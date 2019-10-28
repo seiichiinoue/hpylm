@@ -26,6 +26,17 @@ void split_word_by(const wstring &str, wchar_t delim, vector<wstring> &elems) {
     }
 }
 
+template<class T>
+python::list list_from_vector(vector<T> &vec){  
+     python::list list;
+     typename vector<T>::const_iterator it;
+
+     for(it = vec.begin(); it != vec.end(); ++it)   {
+          list.append(*it);
+     }
+     return list;
+}
+
 class PyHPYLM {
     HPYLM *_hpylm;
     Vocab *_vocab;
@@ -134,6 +145,71 @@ class PyHPYLM {
             }
         }
         shuffle(_rand_indices.begin(), _rand_indices.end(), sampler::mt);
-
+        for (int n=0; n<_dataset_train.size(); ++n) {
+            int data_index = _rand_indices[n];
+            vector<id> &token_ids = _dataset_train[data_index];
+            for (int token_t_index=_hpylm->ngram()-1; token_t_index<token_ids.size(); ++token_t_index) {
+                if (!_gibbs_first_addition) {
+                    _hpylm->remove_customer_at_timestep(token_ids, token_t_index);
+                }
+                _hpylm->add_customer_at_timestep(token_ids, token_t_index);
+            }
+        }
+        _gibbs_first_addition = false;
+    }
+    void remove_all_data() {
+        for (int data_index=0; data_index<_dataset_train.size(); ++data_index) {
+            vector<id> &token_ids = _dataset_train[data_index];
+            for (int token_t_index=_hpylm->ngram()-1; token_t_index<token_ids.size(); ++token_t_index) {
+                _hpylm->remove_customer_at_timestep(token_ids, token_t_index);
+            }
+        }
+    }
+    int get_num_train_data(){
+        return _dataset_train.size();
+    }
+    int get_num_test_data(){
+        return _dataset_test.size();
+    }
+    int get_num_nodes(){
+        return _hpylm->get_num_nodes();
+    }
+    int get_num_customers(){
+        return _hpylm->get_num_customers();
+    }
+    int get_num_types_of_words(){
+        return _word_count.size();
+    }
+    int get_num_words(){
+        return _sum_word_count;
+    }
+    int get_hpylm_depth(){
+        return _hpylm->_depth;
+    }
+    id get_bos_id(){
+        return ID_BOS;
+    }
+    id get_eos_id(){
+        return ID_EOS;
+    }
+    python::list count_tokens_of_epoch_depth() {
+        unordered_map<int, int> counts_by_depth;
+        _hpylm->count_tokens_of_each_depth(counts_by_depth);
+        // sort
+        std::map<int, int> sorted_counts_by_depth(counts_by_depth.begin(), counts_by_depth.end());
+        std::vector<int> counts;
+        for (auto it=sorted_counts_by_depth.begin(); it!=sorted_counts_by_depth.end(); ++it) {
+            counts.push_back(it->second);
+        }
+        return list_from_vector(counts);
+    }
+    python::list get_discount_parameters() {
+        return list_from_vector(_hpylm->_d_m);
+    }
+    python::list get_strength_parameters() {
+        return list_from_vector(_hpylm->_theta_m);
+    }
+    void sample_hyperparameters() {
+        _hpylm->sample_hyperparams();
     }
 };
