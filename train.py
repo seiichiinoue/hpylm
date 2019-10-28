@@ -16,7 +16,7 @@ def train(args):
     for epoch in range(1, args.epoch+1):
         hpylm.perform_gibbs_sampling()
         hpylm.sample_hyperparameters()
-        if epoch % 10 == 0:
+        if epoch % 100 == 0:
             # validation
             print("epoch: {}/{}".format(epoch, args.epoch))
             log_likelihood = hpylm.compute_log_P_dataset_test()
