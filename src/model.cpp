@@ -212,4 +212,33 @@ class PyHPYLM {
     void sample_hyperparameters() {
         _hpylm->sample_hyperparams();
     }
+    // calculate log likelihood
+    double compute_log_P_dataset_train() {
+        return _compute_log_P_dataset(_dataset_train);
+    }
+    double compute_log_P_dataset_test() {
+        return _compute_log_P_dataset(_dataset_test);
+    }
+    double _compute_log_P_dataset(vector<vector<id>> &dataset) {
+        double log_P_dataset = 0;
+        for (int data_index=0; data_index<dataset.size(); ++dataset_index) {
+            vector<id> &token_ids = dataset[data_index];
+            log_P_dataset += _hpylm->compute_log_Pw(token_ids);
+        }
+        return log_P_dataset;
+    }
+    double compute_perplexity_train(){
+        return _compute_perplexity(_dataset_train);
+    }
+    double compute_perplexity_test(){
+        return _compute_perplexity(_dataset_test);
+    }
+    double _compute_perplexity(vector<vector<id>> &dataset) {
+        double log_P_dataset = 0;
+        for (int data_index=0; data_index<dataset.size(); ++dataset_index) {
+            vector<id> &token_ids = dataset[data_index];
+            log_P_dataset += _hpylm->compute_log2_Pw(token_ids) / (token_ids.size() - _hpylm->_depth);
+        }
+        return pow(2.0, -log_P_dataset, (double)dataset.size());
+    }
 };
