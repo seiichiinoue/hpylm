@@ -19,9 +19,16 @@ void test_train() {
 	model->remove_all_data();
 	delete model;
 }
+void generate() {
+	PyHPYLM *model = new PyHPYLM();
+	model->load("./model/hpylm.model");
+	wstring s = model->generate_sentence();
+	wcout << s << endl;
+}
 
 int main(int argc, char *argv[]) {
 	for(int i = 0;i < 1;i++){
 		test_train();
 	}
+	generate();
 }
