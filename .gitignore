@@ -2,7 +2,7 @@
 *
 
 # allow any
-!data/
+!data/*/*.txt
 !*/
 !*.py
 !*.cpp
