@@ -24,7 +24,7 @@ namespace sampler {
         return 1;
     }
     double uniform(double min=0, double max=0) {
-        uniform_int_distribution<double> rand(min, max);
+        uniform_real_distribution<double> rand(min, max);
         return rand(mt);
     }
 }
