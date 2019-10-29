@@ -28,8 +28,8 @@ def train(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("-f", "--filename", default="./data/processed/kokoro.txt")
-    parser.add_argument("-n", "--ngram", default=3)
-    parser.add_argument("-e", "--epoch", default=10000)
+    parser.add_argument("-n", "--ngram", type=int, default=3)
+    parser.add_argument("-e", "--epoch", type=int, default=10000)
     parser.add_argument("-m", "--model", default="./model")
-    parser.add_argument("-r", "--split_ratio", default=0.8)
+    parser.add_argument("-r", "--split_ratio", type=float, default=0.8)
     train(parser.parse_args())
