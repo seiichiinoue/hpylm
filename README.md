@@ -35,6 +35,12 @@ ABSTRACT:
 % python3 train.py -f data/processed/kokoro.txt -r 0.8
 ```
 
+- generate sentence from trained model
+
+```zsh
+% python3 utils/generate.py
+```
+
 ## Reference
 
 - [A Hierarchical Bayesian Language Model based on Pitman-Yor Processes](http://www.gatsby.ucl.ac.uk/~ywteh/research/compling/acl2006.pdf)
