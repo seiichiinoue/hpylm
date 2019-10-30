@@ -6,10 +6,10 @@ def generate(args):
     hpylm = model.hpylm()
     hpylm.load(args.model)
     for _ in range(args.num):
-        print(hpylm.generate_sentence())
+        # print(hpylm.generate_sentence())
         # for japanese
-        # generated = hpylm.generate_sentence().replace(" ", "")
-        # print(generated)
+        generated = hpylm.generate_sentence().replace(" ", "")
+        print(generated)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
