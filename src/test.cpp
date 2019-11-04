@@ -4,7 +4,7 @@ using namespace std;
 void test_train() {
     string dirname = "out";
 	PyHPYLM* model = new PyHPYLM(3);
-	model->load_textfile("data/wiki.txt", 0.95);
+	model->load_textfile("data/processed/wiki.txt", 0.95);
 	model->set_g0(1.0 / model->get_num_types_of_words());
 
 	for(int epoch = 1;epoch < 1000;epoch++){
