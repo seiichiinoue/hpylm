@@ -73,3 +73,5 @@ Amazonからのか安堵あー星はでずほどしてしまう
 ## Reference
 
 - [A Hierarchical Bayesian Language Model based on Pitman-Yor Processes](http://www.gatsby.ucl.ac.uk/~ywteh/research/compling/acl2006.pdf)
+
+- [musyoku.github.io](http://musyoku.github.io/)
