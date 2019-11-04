@@ -7,7 +7,7 @@ void test_train() {
 	model->load_textfile("data/processed/wiki.txt", 0.95);
 	model->set_g0(1.0 / model->get_num_types_of_words());
 
-	for(int epoch = 1;epoch < 1000;epoch++){
+	for(int epoch=1; epoch<1000; ++epoch) {
 		model->perform_gibbs_sampling();
 		// model->sample_hyperparameters();
 		double ppl = model->compute_perplexity_test();
@@ -27,7 +27,7 @@ void generate() {
 }
 
 int main(int argc, char *argv[]) {
-	for(int i = 0;i < 1;i++){
+	for(int i=0; i<1; ++i) {
 		test_train();
 	}
 	generate();
