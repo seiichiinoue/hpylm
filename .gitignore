@@ -10,4 +10,5 @@
 !*.md
 !*.txt
 !.gitignore
+!dockerfile
 !makefile
