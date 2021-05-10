@@ -23,7 +23,7 @@
 % make
 ```
 
-- training hpylm
+- training model
 
 ```zsh
 % python3 train.py -f data/processed/kokoro.txt -r 0.8
